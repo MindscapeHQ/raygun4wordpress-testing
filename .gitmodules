@@ -1,0 +1,3 @@
+[submodule "html/wp-content/plugins/raygun4wordpress"]
+	path = html/wp-content/plugins/raygun4wordpress
+	url = https://github.com/MindscapeHQ/raygun4wordpress
