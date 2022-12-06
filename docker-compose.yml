@@ -28,6 +28,7 @@ services:
        WORDPRESS_DB_NAME: wordpress
        WORDPRESS_TABLE_PREFIX: "wp_"
 
+   # TODO: make this a profile so that the cli is only included if necessary
    wp-cli:
      depends_on:
        - db
@@ -44,6 +45,10 @@ services:
        WORDPRESS_DB_PASSWORD: wordpress
        WORDPRESS_DB_NAME: wordpress
        WORDPRESS_TABLE_PREFIX: "wp_"
+       
+    # TODO: make a container with a git image with a profile so that the branch can be changed only if necessary
+    #submodule-updater:
+      
 
 volumes:
     db_data:
