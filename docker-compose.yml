@@ -1,8 +1,20 @@
 version: "3.3"
 
 services:
+   submodule-updater:
+     image: alpine/git:latest
+     profiles: ["update_submodule"]
+     volumes: 
+       - ./:/repository
+       - ./scripts/:/scripts/
+     entrypoint: ash /scripts/update_submodule.sh
+     environment:
+       # Set the raygun4wordpress provider target branch name:
+       - PROVIDER_BRANCH=master
+
    db:
      image: mysql:5.7
+     profiles: ["testing", "cli_prepare"]
      volumes:
        - db_data:/var/lib/mysql
      restart: always
@@ -16,6 +28,7 @@ services:
      depends_on:
        - db
      image: wordpress:latest
+     profiles: ["testing", "cli_prepare"]
      ports:
        - "8000:80"
      volumes:
@@ -28,12 +41,12 @@ services:
        WORDPRESS_DB_NAME: wordpress
        WORDPRESS_TABLE_PREFIX: "wp_"
 
-   # TODO: make this a profile so that the cli is only included if necessary
    wp-cli:
      depends_on:
        - db
        - wp
      image: wordpress:cli
+     profiles: ["cli_prepare"]
      volumes:
        - ./html:/var/www/html
        - ./scripts/:/scripts/
@@ -45,10 +58,6 @@ services:
        WORDPRESS_DB_PASSWORD: wordpress
        WORDPRESS_DB_NAME: wordpress
        WORDPRESS_TABLE_PREFIX: "wp_"
-       
-    # TODO: make a container with a git image with a profile so that the branch can be changed only if necessary
-    #submodule-updater:
-      
 
 volumes:
     db_data:
