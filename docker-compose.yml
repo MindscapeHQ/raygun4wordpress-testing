@@ -3,7 +3,7 @@ version: "3.3"
 services:
    submodule-updater:
      image: alpine/git:latest
-     profiles: ["update_submodule"]
+     profiles: ["update"]
      volumes:
        - ./:/repository
      entrypoint: ash /repository/scripts/update_submodule.sh
