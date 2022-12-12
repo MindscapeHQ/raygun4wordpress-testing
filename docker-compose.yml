@@ -12,7 +12,7 @@ services:
      environment:
        - UPDATE=true
 
-   cleaner: # Uses update_submodule.sh for cleaning only
+   cleaner:
      image: alpine/git:latest
      env_file:
        - settings.env
@@ -21,6 +21,7 @@ services:
        - ./:/repository
      entrypoint: ash /repository/scripts/update_submodule.sh
      environment:
+       # Use update_submodule.sh for cleaning and removing API key only
        - UPDATE=false
 
    runner:

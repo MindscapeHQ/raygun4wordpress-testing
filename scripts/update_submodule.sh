@@ -18,4 +18,7 @@ if [ "${UPDATE}" == "true" ]; then
   for file in raygun4wordpress/*; do
     cp -r "$file" raygun-testing
   done
+else
+  echo "Removing API key from settings.env"
+  sed -i "/^API_KEY=/s/=.*/=<API key here>/" settings.env
 fi
