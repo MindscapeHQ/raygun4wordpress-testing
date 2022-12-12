@@ -18,7 +18,7 @@ services:
        dockerfile: Dockerfile
      profiles: ["test"]
      volumes:
-       - ./raygun-testing:/testing_plugin
+       - ./raygun-testing:/test_plugin
        - ./scripts/:/scripts/
      entrypoint: ash /scripts/run_tests.sh
      user: xfs
