@@ -3,19 +3,33 @@ version: "3.3"
 services:
    submodule-updater:
      image: alpine/git:latest
+     env_file:
+       - settings.env
      profiles: ["update"]
      volumes:
        - ./:/repository
      entrypoint: ash /repository/scripts/update_submodule.sh
      environment:
-       # Set the raygun4wordpress provider target branch name:
-       - PROVIDER_BRANCH=master
+       - UPDATE=true
 
-   wp-cli:
+   cleaner: # Uses update_submodule.sh for cleaning only
+     image: alpine/git:latest
+     env_file:
+       - settings.env
+     profiles: ["clean"]
+     volumes:
+       - ./:/repository
+     entrypoint: ash /repository/scripts/update_submodule.sh
+     environment:
+       - UPDATE=false
+
+   runner:
      depends_on:
        - db
      build:
        dockerfile: Dockerfile
+     env_file:
+       - settings.env
      profiles: ["test"]
      volumes:
        - ./raygun-testing:/test_plugin
