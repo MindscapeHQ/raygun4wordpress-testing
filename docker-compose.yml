@@ -21,7 +21,7 @@ services:
        - ./:/repository
      entrypoint: ash /repository/scripts/update_submodule.sh
      environment:
-       # Use update_submodule.sh for cleaning and removing API key only
+       # Use update_submodule.sh for cleaning and removing the API key only
        - UPDATE=false
 
    runner:
