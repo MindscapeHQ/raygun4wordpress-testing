@@ -2,4 +2,4 @@
 * text=auto
 
 # Ensure shell scripts keep Unix line endings.
-scripts/** text eol-lf
+scripts/* text eol-lf
