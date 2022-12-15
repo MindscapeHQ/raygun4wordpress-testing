@@ -29,6 +29,17 @@ require_once "{$_tests_dir}/includes/functions.php";
  * Manually load the plugin being tested.
  */
 function _manually_load_plugin() {
+    // TODO: check if this is allowed before rg4wp_register_settings is done
+    add_option('rg4wp_apikey', getenv("API_KEY"), 'yes');
+    add_option('rg4wp_tags', '', 'yes');
+    add_option('rg4wp_status', '1', 'yes');
+    add_option('rg4wp_usertracking', '0', 'yes');
+    add_option('rg4wp_404s', '1', 'yes');
+    add_option('rg4wp_js', '1', 'yes');
+    add_option('rg4wp_ignoredomains', '', 'yes');
+    add_option('rg4wp_pulse', '', 'yes');
+    add_option('rg4wp_js_tags', '', 'yes');
+    add_option('rg4wp_async', '0', 'yes');
 	require dirname( dirname( __FILE__ ) ) . '/raygun4wp.php';
 }
 

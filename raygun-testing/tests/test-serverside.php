@@ -2,25 +2,11 @@
 
 class ServersideTest extends WP_UnitTestCase
 {
-    public static function set_up_before_class()
-    {
-        parent::set_up_before_class();
-        update_option('rg4wp_apikey', getenv("API_KEY"), 'yes');
-        update_option('rg4wp_tags', '', 'yes');
-        update_option('rg4wp_status', '1', 'yes');
-        update_option('rg4wp_usertracking', '0', 'yes');
-        update_option('rg4wp_404s', '1', 'yes');
-        update_option('rg4wp_js', '1', 'yes');
-        update_option('rg4wp_ignoredomains', '', 'yes');
-        update_option('rg4wp_pulse', '', 'yes');
-        update_option('rg4wp_js_tags', '', 'yes');
-        update_option('rg4wp_async', '0', 'yes');
-        // add_action( 'admin_init', 'rg4wp_register_settings' ); what this do
-    }
 
-    public function testAssertTrue()
+    public function testUncaughtException()
     {
-        if (get_option('rg4wp_status') && function_exists('curl_version') && get_option('rg4wp_apikey')) {
+        throw new Exception('TEST UNCAUGHT EXCEPTION');
+        /*if (get_option('rg4wp_status') && function_exists('curl_version') && get_option('rg4wp_apikey')) {
             require_once '/test_plugin/external/raygun4php/src/Raygun4php/RaygunClient.php';
             $client = new Raygun4php\RaygunClient(get_option('rg4wp_apikey'), false, true);
 
@@ -38,7 +24,7 @@ class ServersideTest extends WP_UnitTestCase
             }
         } else {
             echo 'Something is missing! Please check that you have enabled Serverside error tracking, the API key is pasted in and you have saved the settings.';
-        }
+        }*/
         $this->assertTrue(true);
     }
 
