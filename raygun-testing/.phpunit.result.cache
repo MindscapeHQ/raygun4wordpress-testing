@@ -1,1 +1,1 @@
-{"version":1,"defects":{"ServersideTest::testAssertTrue":4},"times":{"SampleTest::testAssertTrue":0.105,"ServersideTest::testAssertTrue":0.115}}
+{"version":1,"defects":{"ServersideTest::testAssertTrue":4,"ServersideTest::testSettingsPage":5},"times":{"SampleTest::testAssertTrue":0.105,"ServersideTest::testAssertTrue":0.102,"ServersideTest::testSettingsPage":0.127}}

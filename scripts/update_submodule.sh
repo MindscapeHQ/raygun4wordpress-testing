@@ -12,7 +12,7 @@ done
 if [ "${UPDATE}" == "true" ]; then
   echo "Updating raygun4wordpress submodule from branch \"${PROVIDER_BRANCH}\""
   git submodule--helper set-branch -b ${PROVIDER_BRANCH} raygun4wordpress
-  git submodule--helper update --init --remote
+  git submodule--helper update --init --recursive --remote
 
   echo "Merging raygun4wordpress into raygun-testing (file copy)"
   for file in raygun4wordpress/*; do
