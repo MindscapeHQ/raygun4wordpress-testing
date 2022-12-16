@@ -5,7 +5,7 @@ class ServersideTest extends WP_UnitTestCase
 
     public function testUncaughtException()
     {
-        throw new Exception('TEST UNCAUGHT EXCEPTION');
+        trigger_error("TEST MANUAL ERROR"); // TODO: this will only work if the global raygun client variable is declared correctly!
         /*if (get_option('rg4wp_status') && function_exists('curl_version') && get_option('rg4wp_apikey')) {
             require_once '/test_plugin/external/raygun4php/src/Raygun4php/RaygunClient.php';
             $client = new Raygun4php\RaygunClient(get_option('rg4wp_apikey'), false, true);
