@@ -8,7 +8,7 @@ services:
      profiles: ["update"]
      volumes:
        - ./:/repository
-     entrypoint: ash /repository/scripts/update_submodule.sh
+     entrypoint: ash /repository/scripts/manage_submodule.sh
      environment:
        - UPDATE=true
 
@@ -19,9 +19,9 @@ services:
      profiles: ["clean"]
      volumes:
        - ./:/repository
-     entrypoint: ash /repository/scripts/update_submodule.sh
+     entrypoint: ash /repository/scripts/manage_submodule.sh
      environment:
-       # Use update_submodule.sh for cleaning and removing the API key only
+       # Use manage_submodule.sh for cleaning and removing the API key only
        - UPDATE=false
 
    runner:
