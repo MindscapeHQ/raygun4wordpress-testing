@@ -3,8 +3,11 @@ version: "3.3"
 services:
    runner:
      depends_on:
-       - db
-     image: wordpress:latest
+       db:
+         condition: service_healthy
+       wordpress:
+         condition: service_healthy
+     image: wordpress:cli
      profiles: ["test"]
      env_file:
        - settings.env
@@ -12,14 +15,23 @@ services:
        - ./plugins/:/plugins/
        - ./scripts/:/scripts/
      entrypoint: bash /scripts/run_tests.sh
+
+   wordpress:
+     depends_on:
+       db:
+         condition: service_healthy
+     image: wordpress:latest
+     profiles: ["test"]
      ports:
-       - "8000:80"
+       - 8000:80
      environment:
        WORDPRESS_DB_HOST: db:3306
        WORDPRESS_DB_USER: wordpress
        WORDPRESS_DB_PASSWORD: wordpress
        WORDPRESS_DB_NAME: wordpress
        WORDPRESS_TABLE_PREFIX: "wp_"
+     healthcheck:
+       test: #TODO
 
    db:
      image: mysql:5.7
@@ -32,6 +44,11 @@ services:
        MYSQL_DATABASE: wordpress
        MYSQL_USER: wordpress
        MYSQL_PASSWORD: wordpress
+     healthcheck:
+       test: mysqladmin ping -h db --silent --password=wordpress
+       interval: 2s
+       retries: 10
+       timeout: 5s
 
    submodule-updater:
      image: alpine/git:latest
