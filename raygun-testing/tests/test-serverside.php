@@ -8,6 +8,20 @@
 
 class ServersideTest extends WP_UnitTestCase
 {
+    /*
+  * Helper function to set the current WordPress user
+  * @param string $role The role of the user
+  */
+    public function setUser($role)
+    {
+        $current_user = get_current_user_id();
+        wp_set_current_user(self::factory()->user->create(array('role' => $role)));
+    }
+
+    public function set_up()
+    {
+        update_option('siteurl', 'http://example.com');
+    }
 
     public function testErrorHandlerManually()
     {
@@ -15,23 +29,12 @@ class ServersideTest extends WP_UnitTestCase
         trigger_error("Error handler functions with trigger_error");
     }
 
-    /*public function testSettingsPagePost()
+    public function testMenusAdded()
     {
-        $this->expectNotToPerformAssertions();
-        exec("curl -X POST -d \"option_page=rg4wp&action=update&_wpnonce=" . wp_create_nonce() . "&_wp_http_referer=%2Fwp-admin%2Fadmin.php%3Fpage%3Drg4wp-settings&rg4wp_apikey=" . getenv("API_KEY") . "&rg4wp_ignoredomains=&rg4wp_usertracking=1&rg4wp_status=1&rg4wp_js=1&rg4wp_404s=1&rg4wp_async=1&rg4wp_tags=&rg4wp_js_tags=&rg4wp_pulse=1&action=update&page_options=rg4wp_status%2Crg4wp_apikey%2Crg4wp_tags%2Crg4wp_404s%2Crg4wp_js%2Crg4wp_usertracking%2Crg4wp_ignoredomains%2Crg4wp_pulse%2Crg4wp_js_tags&submitForm=Save+Changes\" https://host.docker.internal:8000/wp-admin/options.php");
-        exec("curl -X POST -d \"page=rg4wp-settings&settings-updated=true\" https://host.docker.internal:8000/wp-admin/admin.php");
-    }*/
-
-    public function testSendTestErrorPost()
-    {
-        $this->expectNotToPerformAssertions();
-        $response = $this->post('/sendtesterror.php', [
-            'rg4wp_status' => get_option('rg4wp_status'),
-            'rg4wp_apikey' => get_option('rg4wp_apikey'),
-            'rg4wp_usertracking' => get_option('rg4wp_usertracking'),
-            'user' => 'testrunner'
-        ]);
-        print $response;
+        setUser('administrator');
+        do_action('admin_menu');
+        $this->assertNotEmpty(menu_page_url('rg4wp', false));
+        $this->assertNotEmpty(menu_page_url('rg4wp-settings', false));
     }
 
     public static function tear_down_after_class()
