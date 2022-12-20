@@ -1,42 +1,19 @@
 version: "3.3"
 
 services:
-   submodule-updater:
-     image: alpine/git:latest
-     env_file:
-       - settings.env
-     profiles: ["update"]
-     volumes:
-       - ./:/repository
-     entrypoint: ash /repository/scripts/manage_submodule.sh
-     environment:
-       - UPDATE=true
-
-   cleaner:
-     image: alpine/git:latest
-     env_file:
-       - settings.env
-     profiles: ["clean"]
-     volumes:
-       - ./:/repository
-     entrypoint: ash /repository/scripts/manage_submodule.sh
-     environment:
-       # Use manage_submodule.sh for cleaning and removing the API key only
-       - UPDATE=false
-
    runner:
      depends_on:
        - db
-     build:
-       dockerfile: Dockerfile
+     image: wordpress:latest
+     profiles: ["test"]
      env_file:
        - settings.env
-     profiles: ["test"]
      volumes:
-       - ./raygun-testing:/test_plugin
+       - ./plugins/:/plugins/
        - ./scripts/:/scripts/
-     entrypoint: ash /scripts/run_tests.sh
-     user: xfs
+     entrypoint: bash /scripts/run_tests.sh
+     ports:
+       - "8000:80"
      environment:
        WORDPRESS_DB_HOST: db:3306
        WORDPRESS_DB_USER: wordpress
@@ -55,6 +32,24 @@ services:
        MYSQL_DATABASE: wordpress
        MYSQL_USER: wordpress
        MYSQL_PASSWORD: wordpress
+
+   submodule-updater:
+     image: alpine/git:latest
+     profiles: ["update"]
+     env_file:
+       - settings.env
+     volumes:
+       - ./:/repository
+     entrypoint: ash /repository/scripts/update_submodule.sh
+
+   cleaner:
+     image: alpine/git:latest
+     profiles: ["clean"]
+     env_file:
+       - settings.env
+     volumes:
+       - ./:/repository
+     entrypoint: ash /repository/scripts/clean.sh
 
 volumes:
     db_data:

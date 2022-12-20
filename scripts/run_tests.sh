@@ -1,4 +1,4 @@
-#!/etc/env ash
+#!/etc/env bash
 
 # Wait for database initialization
 sleep 1
@@ -7,15 +7,9 @@ while ! mysqladmin ping -h db --silent; do
   sleep 1
 done
 
-cd /test_plugin
-if [ -f raygun4wp.php ]; then
-  if [ "${API_KEY}" != "<API key here>" ]; then
-    # If a specific version of WordPress needs to be tested, change it here \/
-    yes | bin/install-wp-tests.sh wordpress_test root wordpress db:3306 latest
-    composer run test
-  else
-    echo "Enter your API key in settings.env!"
-  fi
+if [ "${API_KEY}" != "<API key here>" ]; then
+  echo "Installing WordPress Core"
+  wp core install --path="/var/www/html" --url="http://localhost:8000" --title="WPLOCAL" --admin_user=raygun --admin_password=raygunadmin --admin_email=test@raygun.com
 else
-  echo "raygun4wp missing: did you run \"docker compose --profile update up\"?"
+  echo "Enter your API key in settings.env!"
 fi
