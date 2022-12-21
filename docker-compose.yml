@@ -12,16 +12,27 @@ services:
      env_file:
        - settings.env
      volumes:
-       - ./plugins/:/plugins/
-       - ./scripts/:/scripts/
+       - wp_data:/var/www/html
+       - ./plugins/:/var/www/html/wp-content/plugins/
+       - ./scripts:/scripts
+     user: xfs
      entrypoint: bash /scripts/run_tests.sh
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+       WORDPRESS_DB_NAME: wordpress
+       WORDPRESS_TABLE_PREFIX: "wp_"
 
    wordpress:
      depends_on:
        db:
          condition: service_healthy
+     # You may modify the WordPress version here:
      image: wordpress:latest
      profiles: ["test"]
+     volumes:
+       - wp_data:/var/www/html
      ports:
        - 8000:80
      environment:
@@ -31,7 +42,10 @@ services:
        WORDPRESS_DB_NAME: wordpress
        WORDPRESS_TABLE_PREFIX: "wp_"
      healthcheck:
-       test: #TODO
+       test: curl --fail wordpress:80 # TODO: silence server logs
+       interval: 3s
+       retries: 10
+       timeout: 5s
 
    db:
      image: mysql:5.7
@@ -46,7 +60,7 @@ services:
        MYSQL_PASSWORD: wordpress
      healthcheck:
        test: mysqladmin ping -h db --silent --password=wordpress
-       interval: 2s
+       interval: 3s
        retries: 10
        timeout: 5s
 
@@ -70,3 +84,4 @@ services:
 
 volumes:
     db_data:
+    wp_data:
