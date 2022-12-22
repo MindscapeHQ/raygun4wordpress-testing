@@ -5,8 +5,7 @@ services:
      depends_on:
        db:
          condition: service_healthy
-       wordpress:
-         condition: service_healthy
+       # Waits for wordpress in run_tests.sh
      image: wordpress:cli
      profiles: ["test"]
      env_file:
@@ -28,7 +27,7 @@ services:
      depends_on:
        db:
          condition: service_healthy
-     # You may modify the WordPress version here:
+     # You can modify the WordPress version here:
      image: wordpress:latest
      profiles: ["test"]
      volumes:
@@ -41,11 +40,6 @@ services:
        WORDPRESS_DB_PASSWORD: wordpress
        WORDPRESS_DB_NAME: wordpress
        WORDPRESS_TABLE_PREFIX: "wp_"
-     healthcheck:
-       test: curl --fail wordpress:80 # TODO: silence server logs
-       interval: 3s
-       retries: 10
-       timeout: 5s
 
    db:
      image: mysql:5.7
@@ -60,9 +54,9 @@ services:
        MYSQL_PASSWORD: wordpress
      healthcheck:
        test: mysqladmin ping -h db --silent --password=wordpress
-       interval: 3s
-       retries: 10
-       timeout: 5s
+       interval: 5s
+       retries: 4
+       timeout: 10s
 
    submodule-updater:
      image: alpine/git:latest
