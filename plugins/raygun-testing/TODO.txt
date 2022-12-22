@@ -1,0 +1,4 @@
+Create a plugin that can trigger errors, exceptions, etc. when POSTed to from the outside.
+Things to include:
+- trigger_error (test the error handler manually)
+...
