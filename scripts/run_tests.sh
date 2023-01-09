@@ -6,7 +6,6 @@ retries=20
 timeout=5 # Seconds
 
 # Wait for the wordpress server:
-sleep 2 # Give initial setup time
 connected=0
 for i in $(seq $retries); do
   sleep $interval
@@ -17,7 +16,11 @@ done
 
 if [ "${API_KEY}" != "<API key here>" ]; then
   echo "Installing WordPress Core"
-  wp core install --path="/var/www/html" --url="http://wordpress:80" --title="wordpress" --admin_user=raygun --admin_password=raygunadmin --admin_email=test@raygun.com
+  # change to wordpress:80
+  wp core install --path="/var/www/html" --url="http://localhost:8000" --title="wordpress" --admin_user=raygun --admin_password=raygunadmin --admin_email=test@raygun.com
+  curl -v -d "log=raygun&pwd=raygunadmin&rememberme=forever&wp-submit=Log+In" http://wordpress:80/wp-login.php
+  curl -v -d "action=activate&plugin=raygun4wordpress%2Fraygun4wp.php&plugin_status=all" http://wordpress:80/wp-admin/plugins.php
+  curl -v -d "activate=true&plugin_status=all" http://wordpress:80/wp-admin/plugins.php
 else
   echo "Enter your API key in settings.env!"
 fi
