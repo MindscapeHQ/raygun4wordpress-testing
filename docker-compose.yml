@@ -13,6 +13,7 @@ services:
      volumes:
        - wp_data:/var/www/html
        - ./scripts:/scripts
+       - ./plugins:/plugins
      user: xfs
      entrypoint: bash /scripts/run_tests.sh
      environment:
@@ -31,7 +32,6 @@ services:
      profiles: ["test"]
      volumes:
        - wp_data:/var/www/html
-       - ./plugins:/var/www/html/wp-content/plugins
      ports:
        - 8000:80
      environment:

@@ -16,11 +16,16 @@ done
 
 if [ "${API_KEY}" != "<API key here>" ]; then
   echo "Installing WordPress Core"
-  # change to wordpress:80
-  wp core install --path="/var/www/html" --url="http://localhost:8000" --title="wordpress" --admin_user=raygun --admin_password=raygunadmin --admin_email=test@raygun.com
-  curl -v -d "log=raygun&pwd=raygunadmin&rememberme=forever&wp-submit=Log+In" http://wordpress:80/wp-login.php
-  curl -v -d "action=activate&plugin=raygun4wordpress%2Fraygun4wp.php&plugin_status=all" http://wordpress:80/wp-admin/plugins.php
-  curl -v -d "activate=true&plugin_status=all" http://wordpress:80/wp-admin/plugins.php
+  wp core install --path="/var/www/html" --url="http://wordpress:80" --title="wordpress" --admin_user=raygun --admin_password=raygunadmin --admin_email=test@raygun.com
+  cd /var/www/html
+  # Copy over testing plugins so that they are visible to both containers
+  cp -rf /plugins/* wp-content/plugins
+  # Activate plugins
+  wp plugin activate raygun4wordpress
+  wp plugin activate raygun-testing
+  # ---- Run Tests ----
+  # curl -v -d "log=raygun&pwd=raygunadmin&rememberme=forever&wp-submit=Log+In" http://wordpress:80/wp-login.php
+  # ---- End Tests ----
 else
   echo "Enter your API key in settings.env!"
 fi
