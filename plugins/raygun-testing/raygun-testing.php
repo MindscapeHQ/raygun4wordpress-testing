@@ -12,4 +12,12 @@
  * @package         Raygun_Testing
  */
 
-// Your code starts here.
+add_action('admin_menu', 'add_test_page');
+
+function add_test_page() {
+	add_menu_page('RaygunTesting', 'RaygunTesting', 'administrator', 'test_page', 'load_tests');
+}
+
+function load_tests() {
+	include dirname(__FILE__).'/tests.php';
+}

@@ -31,8 +31,8 @@ cp -rf /plugins/* wp-content/plugins
 wp plugin activate raygun4wordpress
 wp plugin activate raygun-testing
 # Admin login
-curl --write-out '%{http_code}' --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/wp-login.php
-curl --write-out '%{http_code}' --silent --output /dev/null -L -b /tmp/cookie.txt -c /tmp/cookie.txt -d "log=raygun&pwd=raygunadmin&testcookie=1&rememberme=forever" http://wordpress:80/wp-login.php
+curl --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/wp-login.php
+curl --silent --output /dev/null -L -b /tmp/cookie.txt -c /tmp/cookie.txt -d "log=raygun&pwd=raygunadmin&testcookie=1&rememberme=forever" http://wordpress:80/wp-login.php
 
 # Raygun4WP settings:
 rg4wp_tags=
@@ -46,7 +46,7 @@ rg4wp_js_tags=
 rg4wp_async=0
 
 ##### Equality Assertion Function #####
-# params: Message, Value 1, Value 2
+# Params: Message, Value 1, Value 2
 assert-equals() {
   E_PARAM_ERR=98
   E_ASSERT_FAILED=99
@@ -61,12 +61,21 @@ assert-equals() {
   fi
 }
 
-############### Tests ###############
+##### Serverside Test Runner #####
+# Param: Function Name (String)
+run-serverside-test() {
+  if [ ! -z "${1}" ]; then
+    curl --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt -d "test=${1}" http://wordpress:80/wp-admin/admin.php?page=test_page
+  fi
+}
+
+########## External Tests ##########
 test-settings() {
   echo "RAYGUN-TESTING: Applying settings"
-  curl --write-out '%{http_code}' --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
+  curl --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
   # Unsuccessful curl attempt, might need wpnonce...
   # curl -L -b /tmp/cookie.txt -c /tmp/cookie.txt -d "option_page=rg4wp&action=update&_wp_http_referer=%2Fwp-admin%2Fadmin.php%3Fpage%3Drg4wp-settings&rg4wp_apikey=${API_KEY}&rg4wp_ignoredomains=${rg4wp_ignoredomains}&rg4wp_usertracking=${rg4wp_usertracking}&rg4wp_status=${rg4wp_status}&rg4wp_js=${rg4wp_js}&rg4wp_404s=${rg4wp_404s}&rg4wp_tags=${rg4wp_tags}&rg4wp_js_tags=${rg4wp_js_tags}&rg4wp_pulse=${rg4wp_pulse}&action=update&page_options=rg4wp_status%2Crg4wp_apikey%2Crg4wp_tags%2Crg4wp_404s%2Crg4wp_js%2Crg4wp_usertracking%2Crg4wp_ignoredomains%2Crg4wp_pulse%2Crg4wp_js_tags&submitForm=Save+Changes" http://wordpress:80/wp-admin/options.php
+  # Alternative:
   wp option update rg4wp_apikey $API_KEY
   wp option update rg4wp_tags $rg4wp_tags
   wp option update rg4wp_status $rg4wp_status
@@ -77,7 +86,7 @@ test-settings() {
   wp option update rg4wp_pulse $rg4wp_pulse
   wp option update rg4wp_js_tags $rg4wp_js_tags
   wp option update rg4wp_async $rg4wp_async
-  curl --write-out '%{http_code}' --silent --output /dev/null -G -b /tmp/cookie.txt -c /tmp/cookie.txt -d "settings-updated=true" http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
+  curl --silent --output /dev/null -G -b /tmp/cookie.txt -c /tmp/cookie.txt -d "settings-updated=true" http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
   
   echo "RAYGUN-TESTING: Verifying settings"
   assert-equals "rg4wp_apikey set" $(wp option get rg4wp_apikey) $API_KEY
@@ -101,4 +110,10 @@ test-test-error() {
 ########## Run Tests ##########
 test-settings
 test-test-error
-echo "RAYGUN-TESTING: All tests succeeded - VERIFY IN THE RAYGUN APP"
+run-serverside-test "test_error_handler_manually"
+run-serverside-test "test_manual_exception"
+run-serverside-test "test_manual_errorexception"
+
+echo "********************************"
+echo "VERIFY RESULTS IN THE RAYGUN APP"
+echo "********************************"
