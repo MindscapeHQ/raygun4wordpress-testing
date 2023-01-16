@@ -21,8 +21,7 @@ if [ "${API_KEY}" = "<API key here>" ]; then
 fi
 
 echo "Installing WordPress Core"
-# The url can be changed to "http://localhost:8000" for browser access...
-wp core install --path="/var/www/html" --url="http://wordpress:80" --title="wordpress" --admin_user=raygun --admin_password=raygunadmin --admin_email=test@raygun.com
+wp core install --path="/var/www/html" --url="http://localhost:8000" --title="wordpress" --admin_user=raygun --admin_password=raygunadmin --admin_email=test@raygun.com
 cd /var/www/html
 # Copy over testing plugins so they are visible to both containers
 cp -rf /plugins/* wp-content/plugins
@@ -42,8 +41,8 @@ rg4wp_404s=1
 rg4wp_js=1
 rg4wp_pulse=1
 rg4wp_ignoredomains="example.com"
-rg4wp_tags="tagged-php"
-rg4wp_js_tags="tagged-js"
+rg4wp_tags="serverside"
+rg4wp_js_tags="clientside"
 
 ##### Equality Assertion Function #####
 # Params: Message, Value 1, Value 2
@@ -72,8 +71,9 @@ run-serverside-test() {
 
 run-serverside-tests() {
   run-serverside-test "test_error_handler_manually"
-  run-serverside-test "test_manual_exception"
-  run-serverside-test "test_manual_errorexception"
+  run-serverside-test "test_uncaught_error"
+  run-serverside-test "test_uncaught_exception"
+  run-serverside-test "test_uncaught_errorexception"
 }
 
 ########## External Tests ##########
@@ -110,14 +110,13 @@ test-settings() {
 
 test-test-error() {
   echo "RAYGUN-TESTING: Sending test error"
-  response=$(curl --write-out '%{http_code}' --silent --output /dev/null -G -d "rg4wp_status=1&rg4wp_apikey=${API_KEY}&rg4wp_usertracking=$(rg4wp_usertracking)&user=test%40raygun.com" http://wordpress:80/wp-content/plugins/raygun4wordpress/sendtesterror.php)
+  response=$(curl --write-out '%{http_code}' --silent --output /dev/null -G -d "rg4wp_status=1&rg4wp_apikey=${API_KEY}&rg4wp_usertracking=${rg4wp_usertracking}&user=test%40raygun.com" http://wordpress:80/wp-content/plugins/raygun4wordpress/sendtesterror.php)
   assert-equals "Send test error page loaded" $response "200"
 }
 
 test-404() {
   echo "RAYGUN-TESTING: Testing 404"
-  # TODO: why is this returning a 301 here and a 404 in browser?
-  response=$(curl --write-out '%{http_code}' --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/?page_id=404)
+  response=$(curl -X POST --write-out '%{http_code}' --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/?page_id=404)
   assert-equals "page_id=404 not found" $response "404"
 }
 
@@ -138,6 +137,7 @@ assert-equals "rg4wp_async set" $(wp option get rg4wp_async) 1
 # Test serverside again with async sending
 run-serverside-tests
 
-echo "********************************"
-echo "VERIFY RESULTS IN THE RAYGUN APP"
-echo "********************************"
+echo "******************************************************"
+echo "Visit localhost:8000/wp-admin/admin.php?page=test_page"
+echo "Username: \"raygun\" Password: \"raygunadmin\""
+echo "******************************************************"
