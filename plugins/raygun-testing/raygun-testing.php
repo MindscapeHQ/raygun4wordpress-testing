@@ -12,6 +12,8 @@
  * @package         Raygun_Testing
  */
 
+register_activation_hook(__FILE__, 'rg4wptesting_install');
+add_action('admin_init', 'rg4wptesting_register_settings');
 add_action('admin_menu', 'add_test_page');
 
 function add_test_page() {
@@ -20,4 +22,12 @@ function add_test_page() {
 
 function load_tests() {
 	include dirname(__FILE__).'/tests.php';
+}
+
+function rg4wptesting_install() {
+	add_option('rg4wptesting_test_post_id', 0);
+}
+
+function rg4wptesting_register_settings() {
+	register_setting('rg4wptesting', 'rg4wptesting_test_post_id');
 }

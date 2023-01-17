@@ -65,7 +65,7 @@ assert-equals() {
 # Param: Function Name (String)
 run-serverside-test() {
   if [ ! -z "${1}" ]; then
-    curl --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt -d "test=${1}" http://wordpress:80/wp-admin/admin.php?page=test_page
+    curl -X POST --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt -d "test=${1}" http://wordpress:80/wp-admin/admin.php?page=test_page
   fi
 }
 
@@ -137,7 +137,11 @@ assert-equals "rg4wp_async set" $(wp option get rg4wp_async) 1
 # Test serverside again with async sending
 run-serverside-tests
 
+# Create the test post for RUM verification
+run-serverside-test "create_test_post"
+
 echo "******************************************************"
+echo "Your browser is required for client-side testing..."
 echo "Visit localhost:8000/wp-admin/admin.php?page=test_page"
 echo "Username: \"raygun\" Password: \"raygunadmin\""
 echo "******************************************************"
