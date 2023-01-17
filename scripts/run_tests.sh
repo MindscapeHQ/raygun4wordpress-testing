@@ -40,7 +40,7 @@ rg4wp_usertracking=1
 rg4wp_404s=1
 rg4wp_js=1
 rg4wp_pulse=1
-rg4wp_ignoredomains="example.com"
+rg4wp_ignoredomains= # Multisite support not tested
 rg4wp_tags="serverside"
 rg4wp_js_tags="clientside"
 
