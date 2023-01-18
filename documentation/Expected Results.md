@@ -34,7 +34,7 @@ Should yield these 3 unique errors.\
 
 ---
 
-Further inspecting one of these client-side errors (e.g. "Manually sent error") should reveal breadcrumbs such as:\
+Further inspecting one of these client-side errors (*e.g. "Manually sent error"*) should reveal breadcrumbs such as:\
 ![9_Breadcrumbs](https://user-images.githubusercontent.com/57383574/213060740-d9d5169a-d874-42a6-989c-44dfa359b460.png)
 
 ---
