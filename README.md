@@ -12,8 +12,7 @@ This repository provides some automated integration testing for the [Raygun4WP p
 
 After the automated server-side testing has completed, you will be prompted to visit the site in your browser. Complete the client-side testing by clicking each of the buttons displayed. Finally, compare your results (now located in the Raygun app) with the expected results below.
 
-***Note:***\
-*If you need to test against a specific version of WordPress, that can be specified in `docker-compose.yml` line 33.*
+***Note:*** *If you need to test against a specific version of WordPress, that can be specified in `docker-compose.yml` line 33.*
 
 ---
 
@@ -78,7 +77,7 @@ If you intend to make changes, running `docker compose --profile clean up` remov
 
 ## Explanations
 ### The raygun-testing plugin
-This plugin is activated alongside the raygun4wp provider plugin that is to be tested. It adds an additional admin menu page (`test_page`) that can be posted to externally (e.g. from `run_tests.sh`). Any request to this page is checked for a `'test'` parameter. This parameter expects a string that corresponds to a testing function in `tests.php`, which will be subsequently executed. This means that adding a new test is as simple as adding a function to `tests.php` and posting to the `test_page` with the new `test` string.
+This plugin is activated alongside the raygun4wp provider plugin that is to be tested. It adds an additional admin menu page (`test_page`) that can be posted to externally (e.g. from `run_tests.sh`). Any request to this page is checked for a `'test'` parameter. This parameter expects a string that corresponds to a testing function in `tests.php`, which will be subsequently executed. This means that adding a new test is as simple as adding a function to `tests.php` and posting to the `test_page` with the new test string.
 
 The test page also contains a JavaScript component for client-side testing. This JavaScript code is to be executed by the tester's browser when they request the page.
 
