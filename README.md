@@ -10,7 +10,10 @@ This repository provides some automated integration testing for the [Raygun4WP p
 3. If needed, use `docker compose --profile update up` to automatically update the provider submodule from the branch specified.
 4. Use `docker compose --profile test up` to run testing on the Raygun4WP provider!
 
-After the automated server-side testing has completed, you will be prompted to visit the site in your browser. Complete the client-side testing by clicking each of the buttons displayed. Finally, compare your results (in the Raygun app) with the results below.
+After the automated server-side testing has completed, you will be prompted to visit the site in your browser. Complete the client-side testing by clicking each of the buttons displayed. Finally, compare your results (now located in the Raygun app) with the expected results below.
+
+***Note:***\
+*If you need to test against a specific version of WordPress, that can be specified in `docker-compose.yml` line 33.*
 
 ---
 
@@ -75,9 +78,9 @@ If you intend to make changes, running `docker compose --profile clean up` remov
 
 ## Explanations
 ### The raygun-testing plugin
-This plugin is activated alongside the raygun4wordpress provider plugin that is to be tested. It adds an additional admin menu page (`test_page`) that can be posted to externally (e.g. from `run_tests.sh`). Any request to this page is checked for a `'test'` parameter. This parameter expects a string that corresponds to a testing function in `tests.php`, which will be subsequently executed.
+This plugin is activated alongside the raygun4wp provider plugin that is to be tested. It adds an additional admin menu page (`test_page`) that can be posted to externally (e.g. from `run_tests.sh`). Any request to this page is checked for a `'test'` parameter. This parameter expects a string that corresponds to a testing function in `tests.php`, which will be subsequently executed. This means that adding a new test is as simple as adding a function to `tests.php` and posting to the `test_page` with the new `test` string.
 
-This means that adding a new test is as simple as adding a function to `tests.php` and posting to the `test_page` with the new `test` string.
+The test page also contains a JavaScript component for client-side testing. This JavaScript code is to be executed by the tester's browser when they request the page.
 
 ### How run-tests.sh works
-This script first prepares the testing environment by installing WordPress Core, copying in the necessary plugins, activating them, and performing the admin login for the client. It is then able to run both "external tests" as a client (meaning tests that do not require new PHP code to be executed on the server) and server-side tests by posting to the `test_page`. It includes the function `run-serverside-test()` for this very purpose, as well as `assert-equals()` for basic validation.
+This script first prepares the testing environment by installing WordPress Core, copying in/installing the necessary plugins, activating them, and performing the admin login for the client. It is then able to run both "external tests" as a client (meaning tests that do not require new PHP code to be executed on the server) and server-side tests by posting to the `test_page` as described above. It includes the function `run-serverside-test()` for this very purpose, as well as `assert-equals()` for basic validation.
