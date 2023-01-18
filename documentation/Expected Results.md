@@ -1,4 +1,4 @@
-### Crash Reporting Tab
+### In the Crash Reporting tab
 
 ---
 
@@ -39,7 +39,7 @@ Further inspecting one of these client-side errors (*e.g. "Manually sent error"*
 
 ---
 
-### Real User Monitoring Tab
+### In the Real User Monitoring tab
 
 ---
 
