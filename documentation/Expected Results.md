@@ -12,7 +12,7 @@ Inspecting any error should show the user "test" (@raygun.com):\
 
 ---
 
-Inspecting the structure of the ***errors by second*** graph, e.g...\
+Inspecting the structure of the ***errors by second*** graph by closing in the timeframe, e.g...\
 ![3_Timeframe](https://user-images.githubusercontent.com/57383574/213059705-2173ba81-cb71-483b-98ef-24720addedbd.png)\
 Should show some form of peak where async sending was enabled, e.g.\
 ![4_Graph](https://user-images.githubusercontent.com/57383574/213059940-11c8855a-cf61-43f6-ae8d-18168f9924e1.png)\
