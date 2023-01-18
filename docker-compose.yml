@@ -8,6 +8,8 @@ services:
        # Waits for wordpress in run_tests.sh
      image: wordpress:cli
      profiles: ["test"]
+     environment:
+       - HOME="/tmp"
      env_file:
        - settings.env
      volumes:

@@ -20,16 +20,22 @@ if [ "${API_KEY}" = "<API key here>" ]; then
   exit 1
 fi
 
+# Initialize WordPress with plugins:
 echo "Installing WordPress Core"
 wp core install --path="/var/www/html" --url="http://localhost:8000" --title="wordpress" --admin_user=raygun --admin_password=raygunadmin --admin_email=test@raygun.com
 cd /var/www/html
-# Copy over testing plugins so they are visible to both containers
-cp -rf /plugins/* wp-content/plugins
-
-# Prepare:
-# Activate plugins
-wp plugin activate raygun4wordpress
+# Copy over or install testing plugins so they are visible to both containers
+cp -rf /plugins/raygun-testing wp-content/plugins
+if [ "${USE_SUBMODULE}" = "yes" ]; then
+  mkdir wp-content/plugins/raygun4wp # Rename to match distribution...
+  cp -rf /plugins/raygun4wordpress/* wp-content/plugins/raygun4wp
+else
+  # Install the provider distribution from wordpress.org
+  wp plugin install raygun4wp
+fi
+wp plugin activate raygun4wp
 wp plugin activate raygun-testing
+
 # Admin login
 curl --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/wp-login.php
 curl --silent --output /dev/null -L -b /tmp/cookie.txt -c /tmp/cookie.txt -d "log=raygun&pwd=raygunadmin&testcookie=1&rememberme=forever" http://wordpress:80/wp-login.php
@@ -110,7 +116,7 @@ test-settings() {
 
 test-test-error() {
   echo "RAYGUN-TESTING: Sending test error"
-  response=$(curl --write-out '%{http_code}' --silent --output /dev/null -G -d "rg4wp_status=1&rg4wp_apikey=${API_KEY}&rg4wp_usertracking=${rg4wp_usertracking}&user=test%40raygun.com" http://wordpress:80/wp-content/plugins/raygun4wordpress/sendtesterror.php)
+  response=$(curl --write-out '%{http_code}' --silent --output /dev/null -G -d "rg4wp_status=1&rg4wp_apikey=${API_KEY}&rg4wp_usertracking=${rg4wp_usertracking}&user=test%40raygun.com" http://wordpress:80/wp-content/plugins/raygun4wp/sendtesterror.php)
   assert-equals "Send test error page loaded" $response "200"
 }
 
