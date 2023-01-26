@@ -8,7 +8,7 @@ This repository provides some automated integration testing for the [Raygun4WP p
 1. Create a Raygun application and insert your API key into `settings.env`.
 2. Choose whether to target a specific branch of the provider repository or to use the distributed version in `settings.env`.
 3. If needed, use `docker compose --profile update up` to automatically update the provider submodule from the branch specified.
-4. Use `docker compose --profile test up` to run testing on the Raygun4WP provider! Be sure to run `docker compose --profile test down` in between tests.
+4. Use `docker compose --profile test up` to run testing on the Raygun4WP provider! Be sure to run `docker compose --profile test down` in between tests. It may also be necessary to use `--force-recreate` when composing.
 
 After the automated server-side testing has completed, you will be prompted to visit the site in your browser. Complete the client-side testing by clicking each of the buttons displayed. Finally, compare your results (now located in the Raygun app) with the expected results below.
 
