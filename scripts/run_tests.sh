@@ -20,6 +20,10 @@ if [ "${API_KEY}" = "<API key here>" ]; then
   exit 1
 fi
 
+# Clean up any previous installs
+echo "Cleaning database"
+wp db reset --dbuser="${WORDPRESS_DB_USER}" --dbpass="${WORDPRESS_DB_PASSWORD}" --yes
+
 # Initialize WordPress with plugins:
 echo "Installing WordPress Core"
 wp core install --path="/var/www/html" --url="http://localhost:8000" --title="wordpress" --admin_user=raygun --admin_password=raygunadmin --admin_email=test@raygun.com
