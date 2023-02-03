@@ -26,6 +26,14 @@ function test_uncaught_errorexception() {
 	throw new ErrorException("Manually thrown ErrorException");
 }
 
+function test_no_admin_tracking() {
+	trigger_error("THIS ERROR SHOULD NOT APPEAR: Disable tracking on admin pages is non-functional!");
+}
+
+function test_logging() {
+	
+}
+
 /*----- Client-side Testing Below -----*/
 
 // Creates a post for the "Demonstrate RUM" button to direct to

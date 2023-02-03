@@ -84,6 +84,7 @@ run-serverside-tests() {
   run-serverside-test "test_uncaught_error"
   run-serverside-test "test_uncaught_exception"
   run-serverside-test "test_uncaught_errorexception"
+  run-serverside-test "test_logging"
 }
 
 ########## External Tests ##########
@@ -130,10 +131,29 @@ test-404() {
   assert-equals "page_id=404 not found" $response "404"
 }
 
+test-no-admin-tracking() {
+  # Activate the setting
+  echo "RAYGUN-TESTING: Disabling tracking on admin pages"
+  curl --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
+  wp option update rg4wp_noadmintracking 1
+  curl --silent --output /dev/null -G -b /tmp/cookie.txt -c /tmp/cookie.txt -d "settings-updated=true" http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
+  assert-equals "rg4wp_noadmintracking set" $(wp option get rg4wp_noadmintracking) 1
+  
+  run-serverside-test "test_no_admin_tracking"
+  
+  # Deactivate the setting
+  echo "RAYGUN-TESTING: Re-enabling tracking on admin pages"
+  curl --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
+  wp option update rg4wp_noadmintracking 0
+  curl --silent --output /dev/null -G -b /tmp/cookie.txt -c /tmp/cookie.txt -d "settings-updated=true" http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
+  assert-equals "rg4wp_noadmintracking set" $(wp option get rg4wp_noadmintracking) 0
+}
+
 ########## Run Tests ##########
 test-settings
 test-test-error
 test-404
+test-no-admin-tracking
 
 # Test serverside without async sending
 run-serverside-tests
