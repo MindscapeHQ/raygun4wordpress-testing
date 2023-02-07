@@ -28,6 +28,13 @@ wp db reset --dbuser="${WORDPRESS_DB_USER}" --dbpass="${WORDPRESS_DB_PASSWORD}" 
 echo "Installing WordPress Core"
 wp core install --path="/var/www/html" --url="http://localhost:8000" --title="wordpress" --admin_user=raygun --admin_password=raygunadmin --admin_email=test@raygun.com
 cd /var/www/html
+
+if [ "${DEBUG_MODE}" = "true" ]; then
+  wp config set WP_DEBUG true --raw
+  wp config set WP_DEBUG_LOG true --raw
+  wp config set WP_DEBUG_DISPLAY false --raw
+fi
+
 # Copy over or install testing plugins so they are visible to both containers
 cp -rf /plugins/raygun-testing wp-content/plugins
 if [ "${USE_SUBMODULE}" = "yes" ]; then
@@ -175,3 +182,5 @@ echo "Your browser is required for client-side testing..."
 echo "Visit localhost:8000/wp-admin/admin.php?page=test_page"
 echo "Username: \"raygun\" Password: \"raygunadmin\""
 echo "******************************************************"
+
+cp -f debug.log wp-content/plugins/raygun-testing

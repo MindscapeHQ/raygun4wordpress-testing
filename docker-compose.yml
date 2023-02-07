@@ -19,6 +19,8 @@ services:
      user: xfs
      entrypoint: bash /scripts/run_tests.sh
      environment:
+       # You can enable WordPress debug logging here:
+       DEBUG_MODE: true
        WORDPRESS_DB_HOST: db:3306
        WORDPRESS_DB_USER: wordpress
        WORDPRESS_DB_PASSWORD: wordpress
