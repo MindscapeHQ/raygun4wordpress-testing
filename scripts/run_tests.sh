@@ -183,4 +183,6 @@ echo "Visit localhost:8000/wp-admin/admin.php?page=test_page"
 echo "Username: \"raygun\" Password: \"raygunadmin\""
 echo "******************************************************"
 
-cp -f debug.log wp-content/plugins/raygun-testing
+if [ "${DEBUG_MODE}" = "true" ]; then
+  cp -f wp-content/debug.log /plugins/raygun-testing
+fi
