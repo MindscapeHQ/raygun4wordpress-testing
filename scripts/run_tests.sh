@@ -86,12 +86,25 @@ run-serverside-test() {
   fi
 }
 
+if [ "${MODE}" = "crash" ]; then
+  # Crash the site instead of performing standard testing...
+  echo "RAYGUN-TESTING: CRASH MODE: Simulating a fatal error to crash the site!"
+  curl --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
+  wp option update rg4wp_apikey $API_KEY
+  wp option update rg4wp_status $rg4wp_status
+  wp option update rg4wp_sendfatalerrors 1
+  curl --silent --output /dev/null -G -b /tmp/cookie.txt -c /tmp/cookie.txt -d "settings-updated=true" http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
+  
+  run-serverside-test "trigger_crash_on_next_request"
+  run-serverside-test "trigger_crash" # Arbitrary request
+  exit 0 # Stop here
+fi
+
 run-serverside-tests() {
   run-serverside-test "test_error_handler_manually"
   run-serverside-test "test_uncaught_error"
   run-serverside-test "test_uncaught_exception"
   run-serverside-test "test_uncaught_errorexception"
-  run-serverside-test "test_logging"
 }
 
 ########## External Tests ##########

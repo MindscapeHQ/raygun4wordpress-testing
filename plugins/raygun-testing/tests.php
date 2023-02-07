@@ -1,8 +1,10 @@
 <?php
 // Call the test function corresponding to the request parameter 'test'
-if(isset($_REQUEST['test'])) {
+if (isset($_REQUEST['test'])) {
 	$test = $_REQUEST['test'];
-	call_user_func($test);
+	if (is_callable($test)) {
+		call_user_func($test);
+	}
 }
 
 /*----- Server-side Testing Below -----*/
@@ -30,8 +32,13 @@ function test_no_admin_tracking() {
 	trigger_error("THIS ERROR SHOULD NOT APPEAR: Disable tracking on admin pages is non-functional!");
 }
 
-function test_logging() {
-	
+function trigger_crash_on_next_request() {
+	define("TRIGGER_CRASH", true);
+}
+
+if (defined("TRIGGER_CRASH")) {
+	//throw new Exception("Crash here");
+	//exit();
 }
 
 /*----- Client-side Testing Below -----*/
