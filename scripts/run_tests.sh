@@ -29,7 +29,7 @@ echo "Installing WordPress Core"
 wp core install --path="/var/www/html" --url="http://localhost:8000" --title="wordpress" --admin_user=raygun --admin_password=raygunadmin --admin_email=test@raygun.com
 cd /var/www/html
 
-if [ "${DEBUG_MODE}" = "true" ]; then
+if [ "${WORDPRESS_DEBUG_MODE}" = "true" ]; then
   wp config set WP_DEBUG true --raw
   wp config set WP_DEBUG_LOG true --raw
   wp config set WP_DEBUG_DISPLAY false --raw
@@ -183,6 +183,6 @@ echo "Visit localhost:8000/wp-admin/admin.php?page=test_page"
 echo "Username: \"raygun\" Password: \"raygunadmin\""
 echo "******************************************************"
 
-if [ "${DEBUG_MODE}" = "true" ]; then
+if [ "${WORDPRESS_DEBUG_MODE}" = "true" ]; then
   cp -f wp-content/debug.log /plugins/raygun-testing
 fi
