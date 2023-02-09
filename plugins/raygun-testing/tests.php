@@ -32,15 +32,6 @@ function test_no_admin_tracking() {
 	trigger_error("THIS ERROR SHOULD NOT APPEAR: Disable tracking on admin pages is non-functional!");
 }
 
-function trigger_crash_on_next_request() {
-	define("TRIGGER_CRASH", true);
-}
-
-if (defined("TRIGGER_CRASH")) {
-	//throw new Exception("Crash here");
-	//exit();
-}
-
 /*----- Client-side Testing Below -----*/
 
 // Creates a post for the "Demonstrate RUM" button to direct to

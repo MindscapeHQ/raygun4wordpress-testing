@@ -38,8 +38,8 @@ fi
 # Copy over or install testing plugins so they are visible to both containers
 cp -rf /plugins/raygun-testing wp-content/plugins
 if [ "${USE_SUBMODULE}" = "yes" ]; then
-  mkdir wp-content/plugins/raygun4wp # Rename to match distribution...
-  cp -rf /plugins/raygun4wordpress/* wp-content/plugins/raygun4wp
+  mkdir -p wp-content/plugins/raygun4wp
+  cp -rf /plugins/raygun4wordpress/* wp-content/plugins/raygun4wp # Rename to match distribution
 else
   # Install the provider distribution from wordpress.org
   wp plugin install raygun4wp
@@ -87,16 +87,22 @@ run-serverside-test() {
 }
 
 if [ "${MODE}" = "crash" ]; then
-  # Crash the site instead of performing standard testing...
   echo "RAYGUN-TESTING: CRASH MODE: Simulating a fatal error to crash the site!"
+  # Enable Raygun4WP with minimum settings:
   curl --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
   wp option update rg4wp_apikey $API_KEY
   wp option update rg4wp_status $rg4wp_status
   wp option update rg4wp_sendfatalerrors 1
   curl --silent --output /dev/null -G -b /tmp/cookie.txt -c /tmp/cookie.txt -d "settings-updated=true" http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
-  
-  run-serverside-test "trigger_crash_on_next_request"
-  run-serverside-test "trigger_crash" # Arbitrary request
+  sleep 1
+  # Crash the site instead of performing standard testing...
+  wp option update rg4wptesting_crash_shutdown 1
+  sleep 1
+  curl --silent --output /dev/null -G -b /tmp/cookie.txt -c /tmp/cookie.txt -d "settings-updated=true" http://wordpress:80/wp-admin/admin.php
+  sleep 1
+  echo "**************************************************"
+  echo "Check for a fatal-error in your Raygun application"
+  echo "**************************************************"
   exit 0 # Stop here
 fi
 
@@ -183,6 +189,7 @@ curl --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wo
 wp option update rg4wp_async 1
 curl --silent --output /dev/null -G -b /tmp/cookie.txt -c /tmp/cookie.txt -d "settings-updated=true" http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
 assert-equals "rg4wp_async set" $(wp option get rg4wp_async) 1
+sleep 1
 
 # Test serverside again with async sending
 run-serverside-tests
