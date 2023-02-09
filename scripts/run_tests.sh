@@ -92,7 +92,6 @@ if [ "${MODE}" = "crash" ]; then
   curl --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
   wp option update rg4wp_apikey $API_KEY
   wp option update rg4wp_status $rg4wp_status
-  wp option update rg4wp_sendfatalerrors 1
   curl --silent --output /dev/null -G -b /tmp/cookie.txt -c /tmp/cookie.txt -d "settings-updated=true" http://wordpress:80/wp-admin/admin.php?page=rg4wp-settings
   sleep 1
   # Crash the site instead of performing standard testing...
@@ -101,7 +100,7 @@ if [ "${MODE}" = "crash" ]; then
   curl --silent --output /dev/null -G -b /tmp/cookie.txt -c /tmp/cookie.txt -d "settings-updated=true" http://wordpress:80/wp-admin/admin.php
   sleep 1
   echo "**************************************************"
-  echo "Check for a fatal-error in your Raygun application"
+  echo "Check for a fatal error in your Raygun application"
   echo "**************************************************"
   exit 0 # Stop here
 fi
