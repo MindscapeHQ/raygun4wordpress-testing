@@ -39,6 +39,6 @@ function rg4wptesting_register_settings() {
 function on_rg4wp_active() {
 	// Crash the site if requested...
 	if (1 == get_option('rg4wptesting_crash_shutdown')) {
-		require "thisDoesNotExist.php";
+		@require "thisDoesNotExist.php";
 	}
 }
