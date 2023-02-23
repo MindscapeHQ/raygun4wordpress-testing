@@ -12,7 +12,10 @@ This repository provides some automated integration testing for the [Raygun4WP p
 
 After the automated server-side testing has completed, you will be prompted to visit the site in your browser. Complete the client-side testing by clicking each of the buttons displayed. Finally, compare your results (now located in the Raygun app) with the expected results below.
 
-***Note:*** *If you need to test against a specific version of WordPress, that can be specified in `docker-compose.yml` line 33.*
+### Additional Configurations
+- If you intend to test the shutdown handler (crash with fatal error), you may use `crash` mode in `settings.env`.
+- If you need to test against a specific version of WordPress, this can be specified in `docker-compose.yml` line 35.
+- If you would like to enable WordPress debug logging, this option can be set in `docker-compose.yml` line 23.
 
 ---
 
