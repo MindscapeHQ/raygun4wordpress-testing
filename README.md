@@ -31,14 +31,6 @@ Inspecting any error should show the user "test" (@raygun.com):\
 
 ---
 
-Inspecting the structure of the ***errors by second*** graph by closing in the timeframe, e.g...\
-![3_Timeframe](https://github.com/MindscapeHQ/raygun4wordpress-testing/blob/main/images/3_Timeframe.png)\
-Should show some form of peak where async sending was enabled, e.g.\
-![4_Graph](https://github.com/MindscapeHQ/raygun4wordpress-testing/blob/main/images/4_Graph.png)\
-*Your graph will not be an identical match! A lack of a peak could be indicative of an asyc sending performance issue.*
-
----
-
 Adding a tag filter for "serverside" (*Add filter &rarr; Tags &rarr; is one of*)...\
 ![5_Serverside Tag](https://github.com/MindscapeHQ/raygun4wordpress-testing/blob/main/images/5_Serverside%20Tag.png)\
 Should yield these 5 unique errors.\
