@@ -35,11 +35,13 @@ if [ "${WORDPRESS_DEBUG_MODE}" = "true" ]; then
   wp config set WP_DEBUG_DISPLAY false --raw
 fi
 
+wp plugin uninstall raygun4wp --deactivate
+
 # Copy over or install testing plugins so they are visible to both containers
-cp -rf /plugins/raygun-testing wp-content/plugins
+cp -r /plugins/raygun-testing wp-content/plugins
 if [ "${USE_SUBMODULE}" = "yes" ]; then
   mkdir -p wp-content/plugins/raygun4wp
-  cp -rf /plugins/raygun4wordpress/* wp-content/plugins/raygun4wp # Rename to match distribution
+  cp -r /plugins/raygun4wordpress/* wp-content/plugins/raygun4wp # Rename to match distribution
 else
   # Install the provider distribution from wordpress.org
   wp plugin install raygun4wp

@@ -9,16 +9,7 @@ services:
      image: wordpress:cli
      profiles: ["test"]
      environment:
-       - HOME="/tmp"
-     env_file:
-       - settings.env
-     volumes:
-       - wp_data:/var/www/html
-       - ./scripts:/scripts
-       - ./plugins:/plugins
-     user: xfs
-     entrypoint: bash /scripts/run_tests.sh
-     environment:
+       HOME: "/tmp"
        # You can enable WordPress debug logging here:
        WORDPRESS_DEBUG_MODE: false
        WORDPRESS_DB_HOST: db:3306
@@ -26,6 +17,14 @@ services:
        WORDPRESS_DB_PASSWORD: wordpress
        WORDPRESS_DB_NAME: wordpress
        WORDPRESS_TABLE_PREFIX: "wp_"
+     env_file:
+       - settings.env
+     volumes:
+       - wp_data:/var/www/html
+       - ./scripts:/scripts
+       - ./plugins:/plugins
+     user: www-data
+     entrypoint: bash /scripts/run_tests.sh
 
    wordpress:
      depends_on:
