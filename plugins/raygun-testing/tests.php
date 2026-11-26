@@ -111,7 +111,7 @@ function create_test_post() {
 		function demonstrateRUM() {
 			document.getElementById("js-test-progress-bar").value += 25;
 			setTimeout(function () {
-				window.location.href = window.location.protocol + window.location.hostname + '/?p=' + '<?php echo (int) get_option('rg4wptesting_test_post_id');?>';
+				window.location.href = window.location.origin + '/?p=' + '<?php echo (int) get_option('rg4wptesting_test_post_id');?>';
 			}, 100);
 		}
 	</script>
