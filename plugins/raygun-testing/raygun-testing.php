@@ -12,13 +12,17 @@
  * @package         Raygun_Testing
  */
 
+if (!defined('ABSPATH')) {
+	exit;
+}
+
 register_activation_hook(__FILE__, 'rg4wptesting_install');
 add_action('admin_init', 'rg4wptesting_register_settings');
 add_action('admin_menu', 'add_test_page');
 add_action('plugins_loaded', 'on_rg4wp_active');
 
 function add_test_page() {
-	add_menu_page('RaygunTesting', 'RaygunTesting', 'administrator', 'test_page', 'load_tests');
+	add_menu_page('RaygunTesting', 'RaygunTesting', 'manage_options', 'test_page', 'load_tests');
 }
 
 function load_tests() {
