@@ -84,7 +84,9 @@ assert-equals() {
 # Param: Function Name (String)
 run-serverside-test() {
   if [ ! -z "${1}" ]; then
-    curl -X POST --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt -d "test=${1}" http://wordpress:80/wp-admin/admin.php?page=test_page
+    # The test page only runs tests posted with its nonce
+    nonce=$(curl --silent -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/wp-admin/admin.php?page=test_page | sed -n 's/.*id="rg4wptesting_nonce" value="\([^"]*\)".*/\1/p')
+    curl -X POST --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt -d "test=${1}&_wpnonce=${nonce}" http://wordpress:80/wp-admin/admin.php?page=test_page
   fi
 }
 
@@ -176,8 +178,40 @@ test-no-admin-tracking() {
   assert-equals "rg4wp_noadmintracking set" $(wp option get rg4wp_noadmintracking) 0
 }
 
+test-login-page() {
+  rg4wp_snippet="cdn.raygun.io/raygun4js/raygun.min.js"
+
+  echo "RAYGUN-TESTING: Checking the login page is not tracked by default"
+  wp option update rg4wp_js_loginpage 0
+  count=$(curl --silent http://wordpress:80/wp-login.php | grep -c "${rg4wp_snippet}")
+  assert-equals "No Raygun4JS snippet on wp-login.php" $count 0
+
+  echo "RAYGUN-TESTING: Enabling login page tracking"
+  wp option update rg4wp_js_loginpage 1
+  assert-equals "rg4wp_js_loginpage set" $(wp option get rg4wp_js_loginpage) 1
+  count=$(curl --silent http://wordpress:80/wp-login.php | grep -c "${rg4wp_snippet}")
+  assert-equals "Raygun4JS snippet on wp-login.php" $count 1
+  count=$(curl --silent "http://wordpress:80/wp-login.php?action=lostpassword" | grep -c "${rg4wp_snippet}")
+  assert-equals "Raygun4JS snippet on lost password page" $count 1
+  # Left enabled so the login page appears in the RUM session during client-side testing
+}
+
+test-test-page-security() {
+  echo "RAYGUN-TESTING: Checking the test page rejects unsafe requests"
+  # The admin page has already sent its headers, so check the test did not run rather than the status code
+  curl --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt -d "test=create_test_post" http://wordpress:80/wp-admin/admin.php?page=test_page
+  assert-equals "Test without nonce rejected" $(wp option get rg4wptesting_test_post_id) 0
+  run-serverside-test "wp_logout"
+  response=$(curl --write-out '%{http_code}' --silent --output /dev/null -b /tmp/cookie.txt -c /tmp/cookie.txt http://wordpress:80/wp-admin/admin.php?page=test_page)
+  assert-equals "Test not in the allowed list ignored" $response "200"
+  count=$(curl --silent "http://wordpress:80/wp-content/plugins/raygun-testing/tests.php?test=phpinfo" | grep -c "phpinfo()")
+  assert-equals "tests.php not callable directly" $count 0
+}
+
 ########## Run Tests ##########
 test-settings
+test-test-page-security
+test-login-page
 test-test-error
 test-404
 test-no-admin-tracking

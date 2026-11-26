@@ -1,8 +1,28 @@
 <?php
+// Only run inside WordPress, never when this file is requested directly
+if (!defined('ABSPATH')) {
+	exit;
+}
+
+// Only administrators may run tests
+if (!current_user_can('manage_options')) {
+	wp_die('You do not have permission to run Raygun tests.');
+}
+
 // Call the test function corresponding to the request parameter 'test'
-if (isset($_REQUEST['test'])) {
-	$test = $_REQUEST['test'];
-	if (is_callable($test)) {
+if (isset($_POST['test'])) {
+	check_admin_referer('rg4wptesting_run_test');
+	$test = sanitize_key(wp_unslash($_POST['test']));
+	// Only functions defined in this file may be called
+	$allowed_tests = array(
+		'test_error_handler_manually',
+		'test_uncaught_error',
+		'test_uncaught_exception',
+		'test_uncaught_errorexception',
+		'test_no_admin_tracking',
+		'create_test_post',
+	);
+	if (in_array($test, $allowed_tests, true)) {
 		call_user_func($test);
 	}
 }
@@ -58,6 +78,7 @@ function create_test_post() {
 	}
 </style>
 <body>
+	<input type="hidden" id="rg4wptesting_nonce" value="<?php echo esc_attr(wp_create_nonce('rg4wptesting_run_test')); ?>">
 	<progress id="js-test-progress-bar" value="0" max="100"></progress>
 	<div>
 		<button onclick="this.disabled=true; testManualErrorSend();" class="button-primary">Send Manual Error</button>
@@ -90,7 +111,7 @@ function create_test_post() {
 		function demonstrateRUM() {
 			document.getElementById("js-test-progress-bar").value += 25;
 			setTimeout(function () {
-				window.location.href = window.location.protocol + window.location.hostname + '/?p=' + '<?php echo get_option('rg4wptesting_test_post_id');?>';
+				window.location.href = window.location.protocol + window.location.hostname + '/?p=' + '<?php echo (int) get_option('rg4wptesting_test_post_id');?>';
 			}, 100);
 		}
 	</script>
